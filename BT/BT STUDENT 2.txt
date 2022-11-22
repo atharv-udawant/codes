@@ -1,0 +1,45 @@
+pragma solidity ^0.8.7;
+
+contract StudentRegister {
+    struct Student {
+        string name;
+        string contactNo;
+        address id;
+        bool exists;
+    }
+    address admin;
+    int fallbackCount ;
+    constructor ()  {
+        admin = msg.sender;
+        fallbackCount = 0;
+    }
+
+    mapping(address => Student) students;
+
+    function register(string memory _name, string memory _contactNo, address _id) public {
+        require(students[_id].exists == false, "Student already exists!");
+        require(msg.sender == admin, "Only admin can register");
+        students[_id].exists = true;
+        students[_id].name = _name;
+        students[_id].contactNo = _contactNo;
+    }
+
+    function getDetails(address _id) public view returns (string memory , string memory ) {
+        
+        require(students[_id].exists == true, "Student does not exist!");
+        return(students[_id].name, students[_id].contactNo);
+    }
+    function showFallbackCount() public view returns(int){
+        return (fallbackCount);
+    }
+    fallback() external {
+        fallbackCount++;
+        // require(fallbackCount == 0, "fallback function called");
+    }    
+}
+
+contract Teacher {
+    function findTeacher(address A) public  {
+        A.call(abi.encodeWithSignature("findTeacher()"));
+    }
+}
